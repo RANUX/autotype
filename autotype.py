@@ -45,16 +45,17 @@ def check_empty_content(content):
         print('Nothing to play. Exiting')
         exit(0)
 
-def play_content(content):
-    check_empty_content(content)
-    number, lines = content.pop(0)
-    print('Plaing content: ', number)
-    for line in lines:
-        keyboard.write(line)
-        keyboard.write('\n', delay=0.01)
-        time.sleep(0.05)
+def play_block_line(line):
+    keyboard.write(line)
+    keyboard.write('\n', delay=0.01)
+    time.sleep(0.05)
 
-def skip_to_next(content):
+def play_content_block(block):
+    while block:
+        line = block.pop(0)
+        play_block_line(line)
+
+def skip_to_next_block(content):
     check_empty_content(content)
     number, _ = content.pop(0)
     print('Skipping content: ', number)
@@ -68,26 +69,38 @@ def main():
     content = read_file(sys.argv[1])
     # sort content by number
     content = sorted(content.items())
-    print(content)
+    # print(content)
     print('Press ctrl+shift+1 to start and esc to exit')
 
     # create queue size of 3
     queue = deque(maxlen=3)
+    block = None
 
     while True:
+        if not block:
+            check_empty_content(content)
+            number, block = content.pop(0)
+            print('Plaing block: ', number)
+
         # Wait for the next event.
         event = keyboard.read_event()
         if event.event_type == keyboard.KEY_DOWN and event.name == 'esc':
             break
-        queue.append(event)
 
+        queue.append(event)
+ 
         if len(queue) == 3:
-            if queue[0].name == 'ctrl' and queue[1].name == 'shift' and queue[2].name == '1':
+            if queue[0].name == 'ctrl' and queue[1].name == 'shift' and queue[2].name == '8':
                 time.sleep(0.3)
-                play_content(content)
-            if queue[0].name == 'ctrl' and queue[1].name == 'shift' and queue[2].name == '2':
+                play_content_block(block)
+            if queue[0].name == 'ctrl' and queue[1].name == 'shift' and queue[2].name == '9':
                 time.sleep(0.3)
-                skip_to_next(content)
+                line = block.pop(0)
+                print(f'lines left: {len(block)}')
+                play_block_line(line)
+            if queue[0].name == 'ctrl' and queue[1].name == 'shift' and queue[2].name == '0':
+                time.sleep(0.3)
+                skip_to_next_block(content)
 
 if __name__ == '__main__':
     main()

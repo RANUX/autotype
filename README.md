@@ -21,7 +21,9 @@ Run following commands from your terminal:
 ```
 python autotype.py <filename>
 ```
-Press ctrl+shift+1 to start auto typing.
+Press ctrl+shift+8 to start auto type content block.
+Press ctrl+shift+9 to start auto type content block line by line.
+Press ctrl+shift+0 to pass block.
 Press esc if you want to exit
 
 ## Configure VSCode

@@ -27,3 +27,8 @@ snake_colour = (236, 240, 241)
 food_colour = (148, 49, 38)
 snake_head = (247, 220, 111)
 # 3 end
+
+# 4 start
+print('Press ctrl+shift+1 to start and esc to exit')
+print('Press ctrl+shift+2 to skip to next')
+# 4 end
