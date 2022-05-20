@@ -11,7 +11,7 @@ def read_file(file_name):
     content = {}
     number = None
     command = None
-    with open(file_name) as f:
+    with open(file_name, encoding='utf-8') as f:
         # while not end of file
         while True:
             line = f.readline()
@@ -46,9 +46,10 @@ def check_empty_content(content):
         exit(0)
 
 def play_block_line(line):
-    keyboard.write(line)
+    for s in line:
+        keyboard.write(s, delay=0.02)
     keyboard.write('\n', delay=0.01)
-    time.sleep(0.05)
+    time.sleep(0.1)
 
 def play_content_block(block):
     while block:
@@ -70,7 +71,7 @@ def main():
     # sort content by number
     content = sorted(content.items())
     # print(content)
-    print('Press ctrl+shift+1 to start and esc to exit')
+    print('Press ctrl+5 to start and esc to exit')
 
     # create queue size of 3
     queue = deque(maxlen=3)
@@ -84,21 +85,22 @@ def main():
 
         # Wait for the next event.
         event = keyboard.read_event()
+        # print(event)
         if event.event_type == keyboard.KEY_DOWN and event.name == 'esc':
             break
 
         queue.append(event)
  
         if len(queue) == 3:
-            if queue[0].name == 'ctrl' and queue[1].name == 'shift' and queue[2].name == '8':
+            if queue[0].name == 'ctrl' and queue[2].name == '6':
                 time.sleep(0.3)
                 play_content_block(block)
-            if queue[0].name == 'ctrl' and queue[1].name == 'shift' and queue[2].name == '9':
+            if queue[0].name == 'ctrl' and queue[2].name == '5':
                 time.sleep(0.3)
                 line = block.pop(0)
                 print(f'lines left: {len(block)}')
                 play_block_line(line)
-            if queue[0].name == 'ctrl' and queue[1].name == 'shift' and queue[2].name == '0':
+            if queue[0].name == 'ctrl' and queue[2].name == '7':
                 time.sleep(0.3)
                 skip_to_next_block(content)
 

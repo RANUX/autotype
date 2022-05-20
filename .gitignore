@@ -2,12 +2,15 @@
 __pycache__/
 *.py[cod]
 *$py.class
+venv
 
 # vscode
 .vscode
 
 # C extensions
 *.so
+
+1_basic_pygame
 
 # Distribution / packaging
 .Python
