@@ -1,6 +1,7 @@
 # Auto type text from file
 Read content snippets from source file and type it when you want it.
 
+
 ## How to setup
 Run following commands from your terminal:
 ```
@@ -8,6 +9,13 @@ python3 -m venv venv
 . venv/bin/activate
 pip install -Ur requirements.txt
 ```
+
+For mac os:
+```
+brew install portaudio
+pip install --global-option='build_ext' --global-option='-I/usr/local/include' --global-option='-L/usr/local/lib' pyaudio
+```
+
 ## How to run
 Open source file and add comments to text blocks:
 ```

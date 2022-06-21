@@ -3,8 +3,14 @@ import time
 import keyboard
 import re
 import sys
+import os
+import threading
+from audio_player import play_wav
 
+AUDIO_DIR_NAME = 'audio'
 IS_COMMENT_START_WITH_HASH = True   # otherwise use //
+
+autoplay = False 
 
 # read content of file
 def read_file(file_name):
@@ -47,14 +53,32 @@ def check_empty_content(content):
 
 def play_block_line(line):
     for s in line:
-        keyboard.write(s, delay=0.02)
+        keyboard.write(s, delay=0.06)
+        
     keyboard.write('\n', delay=0.01)
     time.sleep(0.1)
 
-def play_content_block(block):
+def play_line_in_thread(number):
+     print('Play wav file: ', f'block_{number}.wav')
+     play_wav(os.path.join(AUDIO_DIR_NAME, f'block_{number}.wav'))
+
+def play_content_block(number, block, voice=False):
+    global autoplay
+
+    th = threading.Thread(target=lambda: play_line_in_thread(number))
+    if block and voice and block[0].startswith('#'):
+        th.start()
+
     while block:
         line = block.pop(0)
+        if line.startswith('#') and line.endswith('!'):
+            print('> Stop block autoplay!')
+            autoplay = False
+
         play_block_line(line)
+
+    # Wait for thread to finish
+    th.join()
 
 def skip_to_next_block(content):
     check_empty_content(content)
@@ -62,6 +86,8 @@ def skip_to_next_block(content):
     print('Skipping content: ', number)
 
 def main():
+    global autoplay
+
     # read file name from command line
     if len(sys.argv) < 2:
         print('Usage: python3 autotype_text.py <file_name>')
@@ -83,26 +109,35 @@ def main():
             number, block = content.pop(0)
             print('Plaing block: ', number)
 
-        # Wait for the next event.
-        event = keyboard.read_event()
-        # print(event)
-        if event.event_type == keyboard.KEY_DOWN and event.name == 'esc':
-            break
+        if not autoplay:
+            # Wait for the next event.
+            event = keyboard.read_event()
+            # print(event)
+            if event.event_type == keyboard.KEY_DOWN and event.name == 'esc':
+                break
 
-        queue.append(event)
- 
-        if len(queue) == 3:
-            if queue[0].name == 'ctrl' and queue[2].name == '6':
-                time.sleep(0.3)
-                play_content_block(block)
-            if queue[0].name == 'ctrl' and queue[2].name == '5':
-                time.sleep(0.3)
-                line = block.pop(0)
-                print(f'lines left: {len(block)}')
-                play_block_line(line)
-            if queue[0].name == 'ctrl' and queue[2].name == '7':
-                time.sleep(0.3)
-                skip_to_next_block(content)
+            queue.append(event)
+
+            if len(queue) == 3:
+                if queue[0].name == 'ctrl' and queue[2].name == '6':
+                    time.sleep(0.3)
+                    play_content_block(number, block)
+                if queue[0].name == 'ctrl' and queue[2].name == '5':
+                    time.sleep(0.3)
+                    line = block.pop(0)
+                    print(f'lines left: {len(block)}')
+                    play_block_line(line)
+                if queue[0].name == 'ctrl' and queue[2].name == '7':
+                    time.sleep(0.3)
+                    skip_to_next_block(content)
+
+                if queue[0].name == 'ctrl' and queue[2].name == '8':
+                    print("Start autoplay")
+                    autoplay = True
+        else:
+            time.sleep(0.3)
+            play_content_block(number, block, voice=True)
+            keyboard.write('\n', delay=0.01)
 
 if __name__ == '__main__':
     main()
