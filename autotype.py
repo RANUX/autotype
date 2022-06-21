@@ -9,6 +9,7 @@ from audio_player import play_wav
 
 AUDIO_DIR_NAME = 'audio'
 IS_COMMENT_START_WITH_HASH = True   # otherwise use //
+BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 
 autoplay = False 
 
@@ -59,26 +60,44 @@ def play_block_line(line):
     time.sleep(0.1)
 
 def play_line_in_thread(number):
-     print('Play wav file: ', f'block_{number}.wav')
-     play_wav(os.path.join(AUDIO_DIR_NAME, f'block_{number}.wav'))
+     file_path =  os.path.join(BASE_DIR, AUDIO_DIR_NAME, f'block_{number}.wav')
+     print(file_path)
+     if os.path.exists(file_path):
+        print('Plaing file: ', file_path)
+        play_wav(file_path)
 
 def play_content_block(number, block, voice=False):
     global autoplay
 
     th = threading.Thread(target=lambda: play_line_in_thread(number))
-    if block and voice and block[0].startswith('#'):
-        th.start()
+    th_started = False
 
+
+    is_synth_text = False
     while block:
         line = block.pop(0)
-        if line.startswith('#') and line.endswith('!'):
+        if line.startswith('"""!'):
+            th.start()
+            th_started = True
+            is_synth_text = True
+        elif line.endswith('"""') and is_synth_text:
+            is_synth_text = False
+            continue
+
+        if is_synth_text:
+            continue
+
+        if line.startswith('#! pause'):
             print('> Stop block autoplay!')
             autoplay = False
+            continue
 
         play_block_line(line)
 
     # Wait for thread to finish
-    th.join()
+    
+    if th_started:
+        th.join()
 
 def skip_to_next_block(content):
     check_empty_content(content)

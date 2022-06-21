@@ -19,16 +19,27 @@ model.to(device)  # gpu or cpu
 
 def synth_content_block(number, block):
     comment_lines = []
+    is_synth_text = False
     while block:
         line = block.pop(0)
-        if line.startswith('#'):
-            comment_lines.append(line)
+        if line.startswith('"""!'):
+            is_synth_text = True
+        elif line.endswith('"""') and is_synth_text:
+            comment_lines.append(line.replace('"""', ''))
+            is_synth_text = False
+
+        if is_synth_text:
+            comment_lines.append(line.replace('"""!', ''))
 
     # create dir if not exists
     if not os.path.exists(AUDIO_DIR_NAME):
         os.makedirs(AUDIO_DIR_NAME)
 
-    audio_paths = model.save_wav(text='.'.join(comment_lines),
+    if not comment_lines:
+        print('Nothing to process')
+        return
+
+    audio_paths = model.save_wav(text=' '.join(comment_lines),
                             speaker=speaker,
                             sample_rate=sample_rate,
                             audio_path=os.path.join(AUDIO_DIR_NAME, f'block_{number}.wav'))

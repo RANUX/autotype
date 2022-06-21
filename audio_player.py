@@ -1,5 +1,6 @@
 import pyaudio
 import wave
+import time
 
 # Set chunk size of 1024 samples per data frame
 CHUNK_SIZE = 1024
@@ -24,7 +25,7 @@ def play_wav(wav_file):
     while data:
         stream.write(data)
         data = wf.readframes(CHUNK_SIZE)
-        time.sleep(0.5)
+    time.sleep(0.5)
 
     # Close and terminate the stream
     stream.close()
