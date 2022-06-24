@@ -3,18 +3,14 @@ import sys
 import torch
 import os
 
-AUDIO_DIR_NAME = 'audio'
+from config.synth_voice_config import *
 
-language = 'ru'
-model_id = 'v3_1_ru'
-sample_rate = 48000
-speaker = 'baya'
-device = torch.device('cpu')
+device = torch.device(TORCH_DEVICE)
 
 model, _ = torch.hub.load(repo_or_dir='snakers4/silero-models',
-                                     model='silero_tts',
-                                     language=language,
-                                     speaker=model_id)
+                                     model=SILERO_MODEL,
+                                     language=LANGUAGE,
+                                     speaker=MODEL_ID)
 model.to(device)  # gpu or cpu
 
 def synth_content_block(number, block):
@@ -40,15 +36,15 @@ def synth_content_block(number, block):
         return
 
     audio_paths = model.save_wav(text=' '.join(comment_lines),
-                            speaker=speaker,
-                            sample_rate=sample_rate,
+                            speaker=SPEAKER,
+                            sample_rate=SAMPLE_RATE,
                             audio_path=os.path.join(AUDIO_DIR_NAME, f'block_{number}.wav'))
     print('Save audio to: ', audio_paths)
 
 def main():
     # read file name from command line
     if len(sys.argv) < 2:
-        print('Usage: python3 autotype_text.py <file_name>')
+        print('Usage: python3 synth_voice.py <file_name>')
         return
 
     content = read_file(sys.argv[1])
@@ -62,5 +58,5 @@ def main():
         
 
 if __name__ == '__main__':
-    """Usage: python3 autotype_text.py <file_name>"""
+    """Usage: python3 synth_voice.py <file_name>"""
     main()

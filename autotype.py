@@ -5,12 +5,11 @@ import re
 import sys
 import os
 import threading
+
 from audio_player import play_wav
+from config.autotype_config import *
 
-AUDIO_DIR_NAME = 'audio'
-IS_COMMENT_START_WITH_HASH = True   # otherwise use //
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
-
 autoplay = False 
 
 # read content of file
@@ -85,11 +84,14 @@ def play_content_block(number, block, voice=False):
             continue
 
         if is_synth_text:
-            continue
+            if '?' in line:
+                print('Stop block. Press ctrl+8 to continue!')
+                autoplay = False
 
-        if line.startswith('#! pause'):
-            print('> Stop block autoplay!')
-            autoplay = False
+            if '$' in line:
+                 print('^F5 pressed to run block')
+                 keyboard.press_and_release(RUN_HOTKEY)
+
             continue
 
         play_block_line(line)
@@ -151,7 +153,7 @@ def main():
                     skip_to_next_block(content)
 
                 if queue[0].name == 'ctrl' and queue[2].name == '8':
-                    print("Start autoplay")
+                    print("Start autoplay with voice")
                     autoplay = True
         else:
             time.sleep(0.3)
