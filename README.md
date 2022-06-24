@@ -38,6 +38,7 @@ Press ctrl+8 to play code with audio comments
 Press esc if you want to exit
 
 ## How to run synth_voice
+Before run, change config file to your needs.
 Next command will generate audio files in "audio" folder:
 ```
 python synth_voice.py  sample.auto.py

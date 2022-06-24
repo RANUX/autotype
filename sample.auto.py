@@ -11,14 +11,14 @@ import time
 # 1 end
 
 # 2 start
-# инициализируем pygame
+# init pygame
 """!?$
 запустим программу
 """
 # 2 end
 
 # 3 start
-# задаём ширину и высоту экрана
+# set with & height
 """!
 задаём ширину и высоту экрана
 """
@@ -27,7 +27,7 @@ height = 500
 # 3 end
 
 # 4 start
-# инициализируем переменные
+# init vars
 """!
 инициализируем основные переменные
 и задаем значения в виде целых чисел
@@ -39,7 +39,7 @@ food_y = 10
 # 4 end
 
 # 5 start
-# создаем объект окна с заданной  шириной и высотой
+# create an object of a window with a given width and height
 """!?
 Создаем объект окн+а с заданной шириной и высотой.
 Для продолжения нажмите контрол плюс восемь.
@@ -48,7 +48,7 @@ display = pygame.display.set_mode((width, height))
 # 5 end
 
 # 6 start
-# устанавливаем заголовок окна
+# Install the window header
 """!
 устанавливаем заголовок окн+а
 """
@@ -63,7 +63,7 @@ clock = pygame.time.Clock()
 # 7 end
 
 # 8 start
-# Инициализируем переменные
+# Initialize variables
 """!
 Инициализируем переменные цвета в кортеже
 """
@@ -80,6 +80,6 @@ snake_head = (247, 220, 111)
 # 9 end
 
 # 10 start
-# Пока!
+# Bye!
 # 10 end
 
