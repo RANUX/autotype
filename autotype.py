@@ -52,6 +52,13 @@ def check_empty_content(content):
         exit(0)
 
 def play_block_line(line):
+
+    # if line contains comment
+    if '# shift+tab' in line:
+        keyboard.press_and_release(SHIFT_TAB_HOTKEY)
+        time.sleep(0.1)
+        return
+
     for s in line:
         keyboard.write(s, delay=0.06)
         
@@ -71,6 +78,7 @@ def play_content_block(number, block, voice=False):
     th = threading.Thread(target=lambda: play_line_in_thread(number))
     th_started = False
 
+    runblock = False
 
     is_synth_text = False
     while block:
@@ -90,12 +98,14 @@ def play_content_block(number, block, voice=False):
 
             if '$' in line:
                  print('^F5 pressed to run block')
-                 keyboard.press_and_release(RUN_HOTKEY)
+                 runblock = True
 
             continue
 
         play_block_line(line)
-
+        if runblock:
+            keyboard.press_and_release(RUN_HOTKEY)
+            runblock = False
     # Wait for thread to finish
     
     if th_started:
